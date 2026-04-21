@@ -1,0 +1,20 @@
+# Variables de entorno
+.env
+*.env
+# Claves de WireGuard generadas
+*.key
+*.pub
+wg0.conf
+
+# Dependencias de Node
+node_modules/
+
+# Logs
+*.log
+
+# Datos de PostgreSQL si tienes volumen local
+postgres_data/
+
+#Carpeta certbot
+certbot/
+nginx/
