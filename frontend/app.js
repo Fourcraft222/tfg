@@ -21,10 +21,10 @@ async function cargarClientes() {
       <td><span class="badge ${c.estado}">${c.estado}</span></td>
       <td>
         ${c.estado === 'activo' ? `
-	  <button class="btn-small" onclick="descargarConf(${c.id})">Descargar .conf</button>
+	  <button class="btn-small" onclick="descargarConf(${c.id})">Archivo conf</button>
   	  <button class="btn-small" onclick="verQR(${c.id})">Ver QR</button>
           <button class="btn-small btn-danger" onclick="darBaja(${c.id})">Dar de baja</button>
-          <button class="btn-small" onclick="revocarCredencial(${c.id})">Revocar</button>
+          <button class="btn-small btn-danger" onclick="revocarCredencial(${c.id})">Revocar</button>
         ` : '-'}
       </td>
     </tr>
