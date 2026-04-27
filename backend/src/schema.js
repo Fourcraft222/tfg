@@ -1,13 +1,26 @@
 const pool = require('./db');
 
 const createTables = async () => {
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS usuarios (
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(50) UNIQUE NOT NULL,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      rol VARCHAR(10) DEFAULT 'usuario',
+      fecha_alta TIMESTAMP DEFAULT NOW(),
+      activo BOOLEAN DEFAULT true
+    );
+  `);
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS clientes (
       id SERIAL PRIMARY KEY,
+      usuario_id INTEGER REFERENCES usuarios(id),
       nombre VARCHAR(100) NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
-      fecha_alta TIMESTAMP DEFAULT NOW(),
-      estado VARCHAR(20) DEFAULT 'activo'
+      fecha_alta TIMESTAMP DEFAULT NOW()
     );
   `);
 
@@ -15,6 +28,7 @@ const createTables = async () => {
     CREATE TABLE IF NOT EXISTS credenciales (
       id SERIAL PRIMARY KEY,
       cliente_id INTEGER REFERENCES clientes(id),
+      nombre_dispositivo VARCHAR(100) DEFAULT 'Dispositivo',
       public_key TEXT NOT NULL,
       private_key TEXT NOT NULL,
       ip_asignada VARCHAR(20) NOT NULL,
@@ -28,7 +42,7 @@ const createTables = async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS logs (
       id SERIAL PRIMARY KEY,
-      cliente_id INTEGER REFERENCES clientes(id),
+      usuario_id INTEGER REFERENCES usuarios(id),
       accion VARCHAR(50) NOT NULL,
       detalle TEXT,
       fecha TIMESTAMP DEFAULT NOW()

@@ -20,6 +20,9 @@ const renovarCredenciales = async () => {
       await execPromise(
         `docker exec mi-wireguard wg set wg0 peer ${cred.public_key} remove`
       );
+      await execPromise(
+         'docker exec mi-wireguard wg-quick save wg0'
+      );
 
       if (cred.auto_renew) {
         // Generar nuevas claves
@@ -36,6 +39,9 @@ const renovarCredenciales = async () => {
         await execPromise(
           `docker exec mi-wireguard wg set wg0 peer ${pubKey} allowed-ips ${cred.ip_asignada}/32`
         );
+	await execPromise(
+	  'docker exec mi-wireguard wg-quick save wg0'
+	);
 
         // Calcular nueva fecha de expiracion
         const nuevaExpiracion = new Date();

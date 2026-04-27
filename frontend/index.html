@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPNaaS - Login</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+  <div class="login-box">
+    <div class="logo">VPNaaS</div>
+    <div class="subtitulo">Accede a tu panel de control</div>
+
+    <label>Usuario</label>
+    <input type="text" id="username" placeholder="Tu usuario">
+
+    <label>Contrasena</label>
+    <input type="password" id="password" placeholder="Tu contrasena">
+
+    <button class="btn" onclick="hacerLogin()">Entrar</button>
+
+    <div id="error" class="mensaje-error"></div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

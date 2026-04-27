@@ -101,9 +101,12 @@ router.post('/dispositivos', async (req, res) => {
       [clienteId, nombre_dispositivo || 'Dispositivo', publicKey, privateKey, ip, fechaExpiracion]
     );
 
-//Añadir peer a WireGuard
+//Añadir y guardar peer a WireGuard
     await execPromise(
       `docker exec mi-wireguard wg set wg0 peer ${publicKey} allowed-ips ${ip}/32`
+    );
+    await execPromise(
+      'docker exec mi-wireguard wg-quick save wg0'
     );
 
     // Guardar log
@@ -135,9 +138,12 @@ router.delete('/dispositivos/:id', async (req, res) => {
 
     const cred = result.rows[0];
 
-    // Eliminar peer de WireGuard
+    // Eliminar y guardar peer de WireGuard
     await execPromise(
       `docker exec mi-wireguard wg set wg0 peer ${cred.public_key} remove`
+    );
+    await execPromise(
+      'docker exec mi-wireguard wg-quick save wg0'
     );
 
     // Actualizar estado

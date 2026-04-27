@@ -89,6 +89,9 @@ router.put('/usuarios/:id/desactivar', async (req, res) => {
       await execPromise(
         `docker exec mi-wireguard wg set wg0 peer ${cred.public_key} remove`
       );
+      await execPromise(
+        'docker exec mi-wireguard wg-quick save wg0'
+      );
     }
 
     // Pausar todos los dispositivos activos en la DB
@@ -157,6 +160,9 @@ router.put('/dispositivos/:id/toggle', async (req, res) => {
         'UPDATE credenciales SET estado = $1, ip_asignada = $2 WHERE id = $3',
         ['pausada', '0.0.0.0', id]
       );
+      await execPromise(
+        'docker exec mi-wireguard wg-quick save wg0'
+      );
       res.json({ mensaje: 'Dispositivo pausado' });
 
     } else if (dispositivo.estado === 'pausada') {
@@ -180,6 +186,9 @@ router.put('/dispositivos/:id/toggle', async (req, res) => {
       await pool.query(
         'UPDATE credenciales SET estado = $1, ip_asignada = $2 WHERE id = $3',
         ['activa', nuevaIP, id]
+      );
+      await execPromise(
+        'docker exec mi-wireguard wg-quick save wg0'
       );
       res.json({ mensaje: 'Dispositivo activado', ip: nuevaIP });
 
@@ -222,6 +231,10 @@ router.put('/usuarios/:id/activar', async (req, res) => {
         `docker exec mi-wireguard wg set wg0 peer ${cred.public_key} allowed-ips ${nuevaIP}/32`
       );
 
+      await execPromise(
+        'docker exec mi-wireguard wg-quick save wg0'
+      );
+
       await pool.query(
         'UPDATE credenciales SET estado = $1, ip_asignada = $2 WHERE id = $3',
         ['activa', nuevaIP, cred.id]
@@ -262,6 +275,9 @@ router.delete('/usuarios/:id', async (req, res) => {
         await execPromise(
           `docker exec mi-wireguard wg set wg0 peer ${cred.public_key} remove`
         );
+	await execPromise(
+	  'docker exec mi-wireguard wg-quick save wg0'
+	);
       } catch (e) {}
     }
 
@@ -300,6 +316,9 @@ router.delete('/dispositivos/:id', async (req, res) => {
         await execPromise(
           `docker exec mi-wireguard wg set wg0 peer ${dispositivo.public_key} remove`
         );
+	await execPromise(
+	  'docker exec mi-wireguard wg-quick save wg0'
+	);
       } catch (e) {}
     }
 
