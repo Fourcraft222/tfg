@@ -19,3 +19,5 @@ postgres_data/
 #Carpeta certbot
 certbot/
 nginx/
+
+riesgos.txt
