@@ -5,6 +5,7 @@
 *.key
 *.pub
 wg0.conf
+wireguard/keys
 
 # Dependencias de Node
 node_modules/

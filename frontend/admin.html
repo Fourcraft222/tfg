@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPNaaS - Admin</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">VPNaaS</div>
+    <div class="user-info">
+      <span id="bienvenida"></span>
+      <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesion</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="numero" id="total-usuarios">-</div>
+        <div class="etiqueta">Usuarios</div>
+      </div>
+      <div class="stat-card">
+        <div class="numero" id="total-dispositivos">-</div>
+        <div class="etiqueta">Dispositivos activos</div>
+      </div>
+      <div class="stat-card">
+        <div class="numero" id="total-peers">-</div>
+        <div class="etiqueta">Peers en WireGuard</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab activa" onclick="cambiarTab('usuarios')">Usuarios</button>
+      <button class="tab" onclick="cambiarTab('dispositivos')">Dispositivos</button>
+    </div>
+
+    <!-- Seccion usuarios -->
+    <div id="seccion-usuarios" class="seccion visible">
+
+      <div class="card">
+        <h2>Nuevo Usuario</h2>
+        <div class="form-row">
+          <input type="text" id="nuevo-username" placeholder="Nombre de usuario">
+          <input type="email" id="nuevo-email" placeholder="Email">
+        </div>
+        <button class="btn" onclick="crearUsuario()">Crear Usuario</button>
+        <div id="password-generada" class="password-generada">
+	<p>ContraseÑa generada - Entregasela al cliente:</p>
+          <span id="password-valor"></span>
+        </div>
+        <div id="error-usuario" class="mensaje-error"></div>
+      </div>
+
+      <div class="card">
+        <h2>Todos los Usuarios</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Dispositivos</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-usuarios">
+            <tr><td colspan="7" style="color:#888;text-align:center">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Seccion dispositivos -->
+    <div id="seccion-dispositivos" class="seccion">
+      <div class="card">
+        <h2>Todos los Dispositivos</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Peer</th>
+              <th>IP</th>
+              <th>Expiracion</th>
+              <th>Estado</th>
+              <th>Auto renew</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-dispositivos">
+            <tr><td colspan="7" style="color:#888;text-align:center">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPNaaS - Mis Dispositivos</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/usuario.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">VPNaaS</div>
+    <div class="user-info">
+      <span id="bienvenida"></span>
+      <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesion</button>
+    </div>
+  </header>
+  <div class="container">
+
+    <div class="card">
+      <h2>Mis Dispositivos</h2>
+      <p class="limite-info" id="limite-info">Cargando...</p>
+
+      <div class="dispositivos-grid" id="dispositivos-grid">
+      </div>
+    </div>
+    <!-- Cambiar contraseña -->
+    <div class="card">
+      <h2>Cambiar Contraseña</h2>
+      <input type="password" id="password-actual" placeholder="Contraseña actual">
+      <input type="password" id="password-nueva" placeholder="Nueva contraseña">
+      <input type="password" id="password-confirmar" placeholder="Confirmar nueva contraseña">
+      <button class="btn" onclick="cambiarPassword()">Cambiar Contraseña</button>
+      <div id="password-error" class="mensaje-error"></div>
+      <div id="password-ok" class="mensaje-ok"></div>
+    </div>
+
+
+  </div>
+  <!-- Modal añadir dispositivo -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h3>Nuevo Dispositivo</h3>
+      <label style="font-size:13px;color:var(--text-secondary);display:block;margin-bottom:6px">
+        Nombre del dispositivo
+      </label>
+      <input type="text" id="modal-nombre" placeholder="Ej: Movil, Portatil, Tablet">
+      <div id="modal-error" class="mensaje-error"></div>
+      <div class="btn-row">
+        <button class="btn" onclick="confirmarAgregarDispositivo()">Agregar</button>
+        <button class="btn btn-danger" onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/usuario.js"></script>
+</body>
+</html>

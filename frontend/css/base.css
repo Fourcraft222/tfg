@@ -1,0 +1,206 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0f1117;
+  --bg-secondary: #1a1d2e;
+  --bg-card: #1e2236;
+  --border: #2a2d3e;
+  --accent: #2E75B6;
+  --accent-hover: #1a5a9a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #888888;
+  --success: #4caf50;
+  --success-bg: #1a3a2a;
+  --danger: #f44336;
+  --danger-bg: #3a1a1a;
+  --warning: #ff9800;
+  --warning-bg: #3a2a1a;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+header {
+  background: var(--bg-secondary);
+  padding: 16px 40px;
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header .logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+header .btn-logout {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+header .btn-logout:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 36px auto;
+  padding: 0 24px;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 10px;
+  padding: 28px;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+}
+
+.card h2 {
+  font-size: 14px;
+  color: var(--accent);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+input, select {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn:hover { background: var(--accent-hover); }
+
+.btn-small {
+  padding: 5px 12px;
+  font-size: 12px;
+  width: auto;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  background: var(--accent);
+  margin: 2px;
+}
+
+.btn-small:hover { background: var(--accent-hover); }
+
+.btn-danger { background: var(--danger) !important; }
+.btn-danger:hover { background: #c0392b !important; }
+
+
+.btn-warning { background: var(--warning) !important; }
+.btn-warning:hover { background: #e65100 !important; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+td {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.badge.activo, .badge.activa {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge.cancelado, .badge.revocada, .badge.expirada {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge.admin {
+  background: #2a1a3a;
+  color: #bb86fc;
+}
+
+.badge.usuario {
+  background: #1a2a3a;
+  color: #64b5f6;
+}
+
+.mensaje-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.mensaje-ok {
+  color: var(--success);
+  font-size: 13px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.badge.pausada {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
