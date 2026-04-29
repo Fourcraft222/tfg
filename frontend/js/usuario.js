@@ -29,7 +29,9 @@ async function cargarDispositivos() {
   const limiteInfo = document.getElementById('limite-info');
   const activos = dispositivos.filter(d => d.estado === 'activa').length;
 
-  limiteInfo.textContent = `${activos} de 5 dispositivos activos`;
+  limiteInfo.textContent = getRol() === 'admin' 
+  ? `${activos} dispositivos activos` 
+  : `${activos} de 5 dispositivos activos`;
   grid.innerHTML = '';
 
   dispositivos.filter(d => d.estado === 'activa').forEach(d => {
@@ -53,7 +55,7 @@ async function cargarDispositivos() {
     grid.appendChild(card);
   });
 
-  if (activos < 5) {
+  if (activos < 5 || getRol() === 'admin') {
     const addCard = document.createElement('div');
     addCard.className = 'add-dispositivo';
     addCard.onclick = abrirModal;

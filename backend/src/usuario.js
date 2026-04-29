@@ -59,7 +59,7 @@ router.get('/dispositivos', async (req, res) => {
   }
 });
 
-// POST /api/usuario/dispositivos - Agregar dispositivo (max 5)
+// POST /api/usuario/dispositivos - Agregar dispositivo (max 5 excepto admin)
 router.post('/dispositivos', async (req, res) => {
   const { nombre_dispositivo } = req.body;
   try {
@@ -78,14 +78,16 @@ router.post('/dispositivos', async (req, res) => {
       return res.status(403).json({ error: 'Usuario desactivado' });
     }
 
-    // Verificar limite de 5 dispositivos
-    const count = await pool.query(
-      `SELECT COUNT(*) FROM credenciales 
-       WHERE cliente_id = $1 AND estado = 'activa'`,
-      [clienteId]
-    );
-    if (parseInt(count.rows[0].count) >= 5) {
-      return res.status(400).json({ error: 'Limite de 5 dispositivos alcanzado' });
+    // Verificar limite de 5 dispositivos solo para usuarios normales
+    if (req.usuario.rol !== 'admin') {
+      const count = await pool.query(
+        `SELECT COUNT(*) FROM credenciales 
+         WHERE cliente_id = $1 AND estado = 'activa'`,
+        [clienteId]
+      );
+      if (parseInt(count.rows[0].count) >= 5) {
+        return res.status(400).json({ error: 'Limite de 5 dispositivos alcanzado' });
+      }
     }
 
     // Generar claves y asignar IP

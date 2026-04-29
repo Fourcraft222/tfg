@@ -66,6 +66,21 @@ header .btn-logout:hover {
   color: var(--danger);
 }
 
+header .btn-switch {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+header .btn-switch:hover {
+  background: var(--accent);
+  color: white;
+}
+
 .container {
   max-width: 1100px;
   margin: 36px auto;
