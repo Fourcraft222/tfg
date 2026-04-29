@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarDispositivos();
   cargarStats();
   cargarModo();
+  cargarTrafico();
 
   // Actualizar cada 1 minuto
   setInterval(() => {
@@ -12,17 +13,29 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarDispositivos();
     cargarStats();
   }, 60000);
+
+  //Actualizar cada segundo el trafico de usuarios
+  setInterval(() => {
+    cargarTrafico();
+  }, 1000);
 });
+
+let traficoAnterior = {};
+let tiempoAnterior = Date.now();
 
 function cambiarTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('activa'));
   document.querySelectorAll('.seccion').forEach(s => s.classList.remove('visible'));
+
   if (tab === 'usuarios') {
     document.querySelectorAll('.tab')[0].classList.add('activa');
     document.getElementById('seccion-usuarios').classList.add('visible');
-  } else {
+  } else if (tab === 'dispositivos') {
     document.querySelectorAll('.tab')[1].classList.add('activa');
     document.getElementById('seccion-dispositivos').classList.add('visible');
+  } else {
+    document.querySelectorAll('.tab')[2].classList.add('activa');
+    document.getElementById('seccion-trafico').classList.add('visible');
   }
 }
 
@@ -264,4 +277,56 @@ async function cambiarModo() {
   } else {
     alert('Error: ' + data.error);
   }
+}
+async function cargarTrafico() {
+  const res = await fetch('/api/admin/trafico', {
+    headers: { 'Authorization': 'Bearer ' + getToken() }
+  });
+  if (res.status === 403 || res.status === 401) { cerrarSesion(); return; }
+  const peers = await res.json();
+  const tbody = document.getElementById('tabla-trafico');
+  const ahora = Date.now();
+  const segundos = (ahora - tiempoAnterior) / 1000;
+
+  if (peers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="color:#888;text-align:center">No hay peers activos</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = peers.map(p => {
+    const anterior = traficoAnterior[p.public_key];
+    let rxVelocidad = 0;
+    let txVelocidad = 0;
+
+    if (anterior && segundos > 0) {
+      rxVelocidad = (p.rx_bytes - anterior.rx_bytes) / segundos;
+      txVelocidad = (p.tx_bytes - anterior.tx_bytes) / segundos;
+    }
+
+    traficoAnterior[p.public_key] = { rx_bytes: p.rx_bytes, tx_bytes: p.tx_bytes };
+
+    return `
+      <tr>
+        <td>${p.username}</td>
+        <td>${p.nombre_dispositivo}</td>
+        <td>${p.ip_asignada}</td>
+        <td><span class="badge ${p.conectado ? 'activo' : 'cancelado'}">${p.conectado ? 'Conectado' : 'Desconectado'}</span></td>
+        <td>${formatBytes(p.rx_bytes)}</td>
+        <td>${formatBytes(p.tx_bytes)}</td>
+        <td style="color:var(--success)">${formatBytes(rxVelocidad)}/s</td>
+        <td style="color:var(--accent)">${formatBytes(txVelocidad)}/s</td>
+        <td>${p.last_handshake > 0 ? new Date(p.last_handshake * 1000).toLocaleString('es-ES') : '-'}</td>
+      </tr>
+    `;
+  }).join('');
+
+  tiempoAnterior = ahora;
+}
+
+function formatBytes(bytes) {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }

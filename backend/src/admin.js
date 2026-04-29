@@ -130,6 +130,7 @@ router.get('/dispositivos', async (req, res) => {
        FROM credenciales cr
        JOIN clientes c ON c.id = cr.cliente_id
        JOIN usuarios u ON u.id = c.usuario_id
+       WHERE cr.estado != 'revocada'
        ORDER BY cr.fecha_emision DESC`
     );
     res.json(result.rows);
@@ -439,6 +440,62 @@ router.get('/modo', async (req, res) => {
       ['modo_web']
     );
     res.json({ modo: result.rows[0].valor });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// GET /api/admin/trafico - Ver trafico de todos los peers
+router.get('/trafico', async (req, res) => {
+  try {
+    const { stdout } = await execPromise('docker exec mi-wireguard wg show wg0 dump');
+    const lineas = stdout.trim().split('\n').slice(1); // saltar la primera linea del servidor
+
+    const peers = lineas.map(linea => {
+      const partes = linea.split('\t');
+      const publicKey = partes[0];
+      const endpoint = partes[2];
+      const allowedIps = partes[3];
+      const lastHandshake = parseInt(partes[4]);
+      const rxBytes = parseInt(partes[5]);
+      const txBytes = parseInt(partes[6]);
+
+      const ahora = Math.floor(Date.now() / 1000);
+      const segundos = ahora - lastHandshake;
+      const conectado = lastHandshake > 0 && segundos < 180;
+
+      return {
+        public_key: publicKey,
+        endpoint: endpoint === '(none)' ? null : endpoint,
+        allowed_ips: allowedIps,
+        last_handshake: lastHandshake,
+        rx_bytes: rxBytes,
+        tx_bytes: txBytes,
+        conectado
+      };
+    });
+
+    // Enriquecer con datos de la DB
+    const result = await pool.query(
+      `SELECT cr.public_key, cr.nombre_dispositivo, cr.ip_asignada,
+              u.username
+       FROM credenciales cr
+       JOIN clientes c ON c.id = cr.cliente_id
+       JOIN usuarios u ON u.id = c.usuario_id
+       WHERE cr.estado = 'activa'`
+    );
+
+    const dispositivos = result.rows;
+    const peersEnriquecidos = peers.map(peer => {
+      const dispositivo = dispositivos.find(d => d.public_key === peer.public_key);
+      return {
+        ...peer,
+        nombre_dispositivo: dispositivo ? dispositivo.nombre_dispositivo : 'Desconocido',
+        username: dispositivo ? dispositivo.username : 'Desconocido',
+        ip_asignada: dispositivo ? dispositivo.ip_asignada : peer.allowed_ips
+      };
+    });
+
+    res.json(peersEnriquecidos);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -57,7 +57,7 @@ const createTables = async () => {
   // Insertar modo por defecto si no existe
   await pool.query(`
     INSERT INTO configuracion (clave, valor)
-    VALUES ('modo_web', 'abierto')
+    VALUES ('modo_web', 'cerrado')
     ON CONFLICT (clave) DO NOTHING;
   `);
 
