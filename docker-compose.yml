@@ -23,6 +23,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./frontend:/app/frontend
+      - ./nginx:/etc/nginx-config
     depends_on:
       db:
         condition: service_healthy

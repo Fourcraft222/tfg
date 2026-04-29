@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarUsuarios();
   cargarDispositivos();
   cargarStats();
+  cargarModo();
 
   // Actualizar cada 1 minuto
   setInterval(() => {
@@ -211,6 +212,56 @@ async function eliminarDispositivo(id) {
     cargarStats();
   } else {
     const data = await res.json();
+    alert('Error: ' + data.error);
+  }
+}
+async function cargarModo() {
+  const res = await fetch('/api/admin/modo', {
+    headers: { 'Authorization': 'Bearer ' + getToken() }
+  });
+  if (res.status === 403 || res.status === 401) { cerrarSesion(); return; }
+  const data = await res.json();
+  actualizarBadgeModo(data.modo);
+}
+
+function actualizarBadgeModo(modo) {
+  const badge = document.getElementById('modo-badge');
+  const btn = document.getElementById('btn-modo');
+  if (modo === 'abierto') {
+    badge.textContent = 'Abierto';
+    badge.className = 'badge activo';
+    btn.textContent = 'Cambiar a Cerrado';
+    btn.className = 'btn btn-warning';
+    btn.style.width = 'auto';
+  } else {
+    badge.textContent = 'Cerrado';
+    badge.className = 'badge cancelado';
+    btn.textContent = 'Cambiar a Abierto';
+    btn.className = 'btn';
+    btn.style.width = 'auto';
+  }
+}
+
+async function cambiarModo() {
+  const badge = document.getElementById('modo-badge');
+  const modoActual = badge.textContent.toLowerCase();
+  const nuevoModo = modoActual === 'abierto' ? 'cerrado' : 'abierto';
+
+  if (!confirm(`Seguro que quieres cambiar el modo a ${nuevoModo}?`)) return;
+
+  const res = await fetch('/api/admin/modo', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + getToken()
+    },
+    body: JSON.stringify({ modo: nuevoModo })
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    actualizarBadgeModo(nuevoModo);
+  } else {
     alert('Error: ' + data.error);
   }
 }

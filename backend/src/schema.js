@@ -48,6 +48,18 @@ const createTables = async () => {
       fecha TIMESTAMP DEFAULT NOW()
     );
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS configuracion (
+      clave VARCHAR(50) PRIMARY KEY,
+      valor VARCHAR(100) NOT NULL
+    );
+  `);
+  // Insertar modo por defecto si no existe
+  await pool.query(`
+    INSERT INTO configuracion (clave, valor)
+    VALUES ('modo_web', 'abierto')
+    ON CONFLICT (clave) DO NOTHING;
+  `);
 
   console.log('Tablas creadas correctamente');
 };

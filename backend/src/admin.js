@@ -6,6 +6,7 @@ const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
 const { verificarToken, soloAdmin } = require('./auth');
+const fs = require('fs');
 
 // Todas las rutas de admin requieren token y rol admin
 router.use(verificarToken);
@@ -336,6 +337,108 @@ router.delete('/dispositivos/:id', async (req, res) => {
     );
 
     res.json({ mensaje: 'Dispositivo eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// PUT /api/admin/modo - Cambiar modo web abierto/cerrado
+router.put('/modo', async (req, res) => {
+  const { modo } = req.body;
+  if (modo !== 'abierto' && modo !== 'cerrado') {
+    return res.status(400).json({ error: 'Modo invalido, usa abierto o cerrado' });
+  }
+
+  try {
+    const dominio = process.env.SERVER_ENDPOINT.split(':')[0];
+
+    const nginxAbierto = `server {
+    listen 80;
+    server_name ${dominio};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name ${dominio};
+
+    ssl_certificate /etc/letsencrypt/live/${dominio}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${dominio}/privkey.pem;
+
+    location / {
+        proxy_pass http://mi-backend:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}`;
+
+// Obtener IP publica actual
+const { stdout: ipPublica } = await execPromise('curl -s ifconfig.me');
+const ip = ipPublica.trim();
+
+    const nginxCerrado = `server {
+    listen 80;
+    server_name ${dominio};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name ${dominio};
+
+    ssl_certificate /etc/letsencrypt/live/${dominio}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${dominio}/privkey.pem;
+
+    allow 192.168.0.0/24;
+    allow 10.0.0.0/24;
+    allow ${ip};
+    deny all;
+
+    location / {
+        proxy_pass http://mi-backend:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}`;
+
+    const config = modo === 'abierto' ? nginxAbierto : nginxCerrado;
+    fs.writeFileSync('/etc/nginx-config/nginx.conf', config);
+
+    await execPromise('docker restart mi-nginx');
+
+    await pool.query(
+      'UPDATE configuracion SET valor = $1 WHERE clave = $2',
+      [modo, 'modo_web']
+    );
+
+    res.json({ mensaje: `Modo web cambiado a ${modo}` });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/admin/modo - Ver modo actual
+router.get('/modo', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT valor FROM configuracion WHERE clave = $1',
+      ['modo_web']
+    );
+    res.json({ modo: result.rows[0].valor });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
