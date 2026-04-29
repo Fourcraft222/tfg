@@ -39,7 +39,7 @@ const login = async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT * FROM usuarios WHERE username = $1 AND activo = true',
+      'SELECT * FROM usuarios WHERE LOWER(username) = LOWER($1) AND activo = true',
       [username]
     );
 
@@ -65,7 +65,6 @@ const login = async (req, res) => {
       usuario: {
         id: usuario.id,
         username: usuario.username,
-        email: usuario.email,
         rol: usuario.rol
       }
     });

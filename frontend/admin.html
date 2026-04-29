@@ -13,6 +13,7 @@
     <div class="logo">VPNaaS</div>
     <div class="user-info">
       <span id="bienvenida"></span>
+      <button class="btn-logout" onclick="window.location.href='/usuario.html'">Mis dispositivos</button>      
       <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesion</button>
     </div>
   </header>
@@ -58,13 +59,10 @@
 
       <div class="card">
         <h2>Nuevo Usuario</h2>
-        <div class="form-row">
-          <input type="text" id="nuevo-username" placeholder="Nombre de usuario">
-          <input type="email" id="nuevo-email" placeholder="Email">
-        </div>
+        <input type="text" id="nuevo-username" placeholder="Nombre de usuario">
         <button class="btn" onclick="crearUsuario()">Crear Usuario</button>
         <div id="password-generada" class="password-generada">
-	<p>ContraseÑa generada - Entregasela al cliente:</p>
+          <p>ContraseÑa generada - Entregasela al cliente:</p>
           <span id="password-valor"></span>
         </div>
         <div id="error-usuario" class="mensaje-error"></div>
@@ -76,7 +74,6 @@
           <thead>
             <tr>
               <th>Usuario</th>
-              <th>Email</th>
               <th>Rol</th>
               <th>Dispositivos</th>
               <th>Estado</th>

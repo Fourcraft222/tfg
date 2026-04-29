@@ -74,7 +74,6 @@ async function cargarUsuarios() {
   tbody.innerHTML = usuarios.map(u => `
     <tr>
       <td>${u.username}</td>
-      <td>${u.email}</td>
       <td><span class="badge ${u.rol}">${u.rol.charAt(0).toUpperCase() + u.rol.slice(1)}</span></td>
       <td>${u.num_dispositivos}</td>
       <td><span class="badge ${u.activo ? 'activo' : 'cancelado'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
@@ -128,7 +127,6 @@ async function cargarDispositivos() {
 
 async function crearUsuario() {
   const username = document.getElementById('nuevo-username').value.trim();
-  const email = document.getElementById('nuevo-email').value.trim();
   const errorDiv = document.getElementById('error-usuario');
   const passwordDiv = document.getElementById('password-generada');
   const passwordValor = document.getElementById('password-valor');
@@ -136,8 +134,8 @@ async function crearUsuario() {
   errorDiv.textContent = '';
   passwordDiv.style.display = 'none';
 
-  if (!username || !email) {
-    errorDiv.textContent = 'Username y email son obligatorios';
+  if (!username) {
+    errorDiv.textContent = 'Username es obligatorio';
     return;
   }
   const res = await fetch('/api/admin/usuarios', {
@@ -146,7 +144,7 @@ async function crearUsuario() {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + getToken()
     },
-    body: JSON.stringify({ username, email })
+    body: JSON.stringify({ username })
   });
 
   const data = await res.json();
@@ -159,7 +157,6 @@ async function crearUsuario() {
   passwordValor.textContent = data.password;
   passwordDiv.style.display = 'block';
   document.getElementById('nuevo-username').value = '';
-  document.getElementById('nuevo-email').value = '';
   cargarUsuarios();
   cargarStats();
 }

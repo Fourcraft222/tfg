@@ -1,6 +1,6 @@
 // Verificar sesion al cargar
 document.addEventListener('DOMContentLoaded', () => {
-  verificarSesion('usuario');
+  verificarSesion();
   document.getElementById('bienvenida').textContent = 'Hola, ' + getUsername();
   cargarDispositivos();
 
@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(() => {
     cargarDispositivos();
   }, 60000);
+
+  if (getRol() === 'admin') {
+    document.getElementById('btn-admin').style.display = 'inline-block';
+  }
 });
 
 async function cargarDispositivos() {

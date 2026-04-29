@@ -15,10 +15,19 @@ const crearAdmin = async () => {
 
     const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
+    const result = await pool.query(
+      `INSERT INTO usuarios (username, password, rol)
+       VALUES ($1, $2, 'admin') RETURNING id`,
+      [process.env.ADMIN_USERNAME, passwordHash]
+    );
+
+    const adminId = result.rows[0].id;
+
+    // Crear cliente asociado al admin
     await pool.query(
-      `INSERT INTO usuarios (username, email, password, rol)
-       VALUES ($1, $2, $3, 'admin')`,
-      [process.env.ADMIN_USERNAME, 'admin@vpnaas.local', passwordHash]
+      `INSERT INTO clientes (usuario_id, nombre)
+       VALUES ($1, $2)`,
+      [adminId, process.env.ADMIN_USERNAME]
     );
 
     console.log('Admin creado correctamente');

@@ -12,7 +12,7 @@ const fs = require('fs');
 router.use(verificarToken);
 router.use(soloAdmin);
 
-// Funcion para generar contrasena aleatoria
+// Funcion para generar contraseña aleatoria
 const generarPassword = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
   let password = '';
@@ -24,9 +24,9 @@ const generarPassword = () => {
 
 // POST /api/admin/usuarios - Crear usuario
 router.post('/usuarios', async (req, res) => {
-  const { username, email } = req.body;
-  if (!username || !email) {
-    return res.status(400).json({ error: 'Username y email obligatorios' });
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({ error: 'Username obligatorio' });
   }
 
   try {
@@ -34,16 +34,16 @@ router.post('/usuarios', async (req, res) => {
     const passwordHash = await bcrypt.hash(passwordPlana, 10);
 
     const result = await pool.query(
-      `INSERT INTO usuarios (username, email, password, rol)
-       VALUES ($1, $2, $3, 'usuario') RETURNING id, username, email, rol, fecha_alta`,
-      [username, email, passwordHash]
+      `INSERT INTO usuarios (username, password, rol)
+       VALUES ($1, $2, 'usuario') RETURNING id, username, rol, fecha_alta`,
+      [username, passwordHash]
     );
 
     // Crear cliente asociado al usuario
     await pool.query(
-      `INSERT INTO clientes (usuario_id, nombre, email)
-       VALUES ($1, $2, $3)`,
-      [result.rows[0].id, username, email]
+      `INSERT INTO clientes (usuario_id, nombre)
+       VALUES ($1, $2)`,
+      [result.rows[0].id, username]
     );
 
     res.status(201).json({
@@ -60,7 +60,7 @@ router.post('/usuarios', async (req, res) => {
 router.get('/usuarios', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT u.id, u.username, u.email, u.rol, u.activo, u.fecha_alta,
+      `SELECT u.id, u.username, u.rol, u.activo, u.fecha_alta,
               COUNT(cr.id) as num_dispositivos
        FROM usuarios u
        LEFT JOIN clientes c ON c.usuario_id = u.id
@@ -126,7 +126,7 @@ router.put('/usuarios/:id/desactivar', async (req, res) => {
 router.get('/dispositivos', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT cr.*, c.nombre, c.email, u.username
+      `SELECT cr.*, c.nombre, u.username
        FROM credenciales cr
        JOIN clientes c ON c.id = cr.cliente_id
        JOIN usuarios u ON u.id = c.usuario_id
