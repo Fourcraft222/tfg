@@ -118,7 +118,6 @@ async function cargarDispositivos() {
             ${d.estado === 'activa' ? 'Pausar' : 'Activar'}
           </button>
           <button class="btn-small btn-danger" onclick="eliminarDispositivo(${d.id})">Eliminar</button>
-          </button>
         ` : '-'}
       </td>
     </tr>
@@ -295,7 +294,7 @@ async function cargarTrafico() {
     let rxVelocidad = 0;
     let txVelocidad = 0;
 
-    if (anterior && segundos > 0) {
+    if (anterior && segundos > 0 && p.conectado) {
       rxVelocidad = (p.rx_bytes - anterior.rx_bytes) / segundos;
       txVelocidad = (p.tx_bytes - anterior.tx_bytes) / segundos;
     }
