@@ -1,0 +1,78 @@
+# VPNaaS sobre Raspberry Pi
+
+Sistema de VPN doméstico construido desde cero con WireGuard, Docker y una plataforma web propia para gestionar usuarios y dispositivos.
+
+---
+
+## Qué hace
+
+Convierte una Raspberry Pi en un servidor VPN privado desde el que puedes dar acceso a clientes externos de forma controlada. Cada usuario tiene su propia cuenta, puede conectar hasta 5 dispositivos y descargar su configuración directamente desde el panel web. Las credenciales se renuevan automáticamente cada año.
+
+El sistema está compuesto por cinco contenedores Docker que trabajan juntos: WireGuard (implementado desde cero, sin imágenes preconfiguradas), un backend Node.js con API REST, PostgreSQL, Nginx como reverse proxy y Certbot para el certificado SSL.
+
+---
+
+## Requisitos previos
+
+Antes de instalar necesitas tener listo lo siguiente:
+
+- Raspberry Pi con Raspberry Pi OS Bookworm (64-bit)
+- Un dominio DDNS apuntando a tu IP pública (puedes usar [DuckDNS](https://www.duckdns.org) gratis)
+- Port forwarding en tu router:
+  - Puerto **80/TCP** → IP de la Pi
+  - Puerto **443/TCP** → IP de la Pi
+  - Puerto **51822/UDP** (o el que elijas) → IP de la Pi
+
+---
+
+## Instalación
+
+```bash
+git clone https://github.com/tuusuario/tfg.git
+cd tfg
+chmod +x install.sh
+./install.sh
+```
+
+El script te pedirá los datos necesarios y se encarga del resto: instala Docker si no está, genera las claves WireGuard, crea la configuración, levanta los contenedores y obtiene el certificado SSL automáticamente.
+
+Al terminar, accede al panel en `https://tudominio.duckdns.org`.
+
+---
+
+## Uso básico
+
+**Como administrador** puedes crear usuarios, ver todos los dispositivos conectados, monitorizar el tráfico en tiempo real y cambiar el modo de acceso web entre abierto (accesible desde Internet) y cerrado (solo red local y VPN).
+
+**Como usuario** puedes añadir tus dispositivos, descargar el archivo `.conf` o escanear el QR desde la app de WireGuard, y gestionar la renovación automática de tus credenciales.
+
+---
+
+## Stack
+
+| Componente | Tecnología |
+|---|---|
+| VPN | WireGuard (Dockerfile propio) |
+| Backend | Node.js + Express |
+| Base de datos | PostgreSQL |
+| Reverse proxy | Nginx + Let's Encrypt |
+| Orquestación | Docker Compose |
+| Hardware | Raspberry Pi 4 |
+
+---
+
+## Estructura del proyecto
+
+```
+tfg/
+├── wireguard/          # Dockerfile e entrypoint de WireGuard
+├── backend/            # API REST y lógica del sistema
+│   └── src/
+│       ├── admin.js    # Rutas de administración
+│       ├── usuario.js  # Rutas de usuario
+│       ├── auth.js     # Autenticación JWT
+│       └── renovacion.js # Renovación automática de credenciales
+├── frontend/           # Panel web (HTML, CSS, JS)
+├── install.sh          # Script de instalación automática
+└── docker-compose.yml
+```
