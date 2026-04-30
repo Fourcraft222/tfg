@@ -36,7 +36,7 @@ const renovarCredenciales = async () => {
         );
         const pubKey = publicKey.trim();
 	
-	//Añadir nuevo peer peer con misma IP
+	//Añadir nuevo peer con misma IP
         await execPromise(
           `docker exec mi-wireguard wg set wg0 peer ${pubKey} allowed-ips ${cred.ip_asignada}/32`
         );

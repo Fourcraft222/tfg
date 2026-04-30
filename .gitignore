@@ -21,3 +21,4 @@ certbot/
 nginx/
 
 riesgos.txt
+.env.save
