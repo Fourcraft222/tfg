@@ -28,7 +28,7 @@ Antes de instalar necesitas tener listo lo siguiente:
 ## Instalación
 
 ```bash
-git clone https://github.com/tuusuario/tfg.git
+git clone https://github.com/fourcraft222/tfg.git
 cd tfg
 chmod +x autoInstall.sh
 ./autoInstall.sh
