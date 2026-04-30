@@ -7,8 +7,9 @@ const renovarCredenciales = async () => {
   try {
     // Buscar credenciales expiradas
     const expiradas = await pool.query(
-      `SELECT cr.*, c.nombre FROM credenciales cr
+      `SELECT cr.*, c.nombre, u.id as usuario_id FROM credenciales cr
        JOIN clientes c ON c.id = cr.cliente_id
+       JOIN usuarios u ON u.id = c.usuario_id
        WHERE cr.estado = 'activa'
        AND cr.fecha_expiracion <= NOW()`
     );
@@ -60,8 +61,8 @@ const renovarCredenciales = async () => {
 
         // Guardar log
         await pool.query(
-          'INSERT INTO logs (cliente_id, accion, detalle) VALUES ($1, $2, $3)',
-          [cred.cliente_id, 'credencial_renovada', `Nueva expiracion: ${nuevaExpiracion.toISOString()}`]
+          'INSERT INTO logs (usuario_id, accion, detalle) VALUES ($1, $2, $3)',
+          [cred.usuario_id, 'credencial_renovada', `Nueva expiracion: ${nuevaExpiracion.toISOString()}`]
         );
 
         console.log(`Credencial del cliente ${cred.nombre} renovada correctamente`);
@@ -76,8 +77,8 @@ const renovarCredenciales = async () => {
 
         // Guardar log
         await pool.query(
-          'INSERT INTO logs (cliente_id, accion) VALUES ($1, $2)',
-          [cred.cliente_id, 'credencial_expirada']
+          'INSERT INTO logs (usuario_id, accion) VALUES ($1, $2)',
+          [cred.usuario_id, 'credencial_expirada']
         );
 
         console.log(`Credencial del cliente ${cred.nombre} expirada sin renovacion`);

@@ -331,11 +331,21 @@ router.delete('/dispositivos/:id', async (req, res) => {
       [id]
     );
 
+    // Obtener usuario_id para el log
+    const usuarioResult = await pool.query(
+      `SELECT u.id as usuario_id FROM usuarios u
+       JOIN clientes c ON c.usuario_id = u.id
+       WHERE c.id = $1`,
+      [dispositivo.cliente_id]
+    );
+    const usuarioId = usuarioResult.rows[0]?.usuario_id;
+
     // Guardar log
     await pool.query(
       'INSERT INTO logs (usuario_id, accion, detalle) VALUES ($1, $2, $3)',
-      [dispositivo.cliente_id, 'dispositivo_eliminado_admin', `ID dispositivo: ${id}`]
+      [usuarioId, 'dispositivo_eliminado_admin', `ID dispositivo: ${id}`]
     );
+
 
     res.json({ mensaje: 'Dispositivo eliminado correctamente' });
   } catch (error) {
