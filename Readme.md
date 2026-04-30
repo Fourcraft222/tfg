@@ -30,8 +30,8 @@ Antes de instalar necesitas tener listo lo siguiente:
 ```bash
 git clone https://github.com/tuusuario/tfg.git
 cd tfg
-chmod +x install.sh
-./install.sh
+chmod +x autoInstall.sh
+./autoInstall.sh
 ```
 
 El script te pedirá los datos necesarios y se encarga del resto: instala Docker si no está, genera las claves WireGuard, crea la configuración, levanta los contenedores y obtiene el certificado SSL automáticamente.
@@ -73,6 +73,6 @@ tfg/
 │       ├── auth.js     # Autenticación JWT
 │       └── renovacion.js # Renovación automática de credenciales
 ├── frontend/           # Panel web (HTML, CSS, JS)
-├── install.sh          # Script de instalación automática
+├── autoInstall.sh          # Script de instalación automática
 └── docker-compose.yml
 ```
