@@ -87,7 +87,7 @@ function verificarSesion(rolRequerido) {
 function cambiarTema() {
   const modoClaro = document.body.classList.toggle('modo-claro');
   localStorage.setItem('tema', modoClaro ? 'claro' : 'oscuro');
-  document.getElementById('btn-tema').textContent = modoClaro ? 'Oscuro' : 'Claro';
+  document.getElementById('btn-tema').textContent = modoClaro ? '🌙' : '☀️';
 }
 
 function aplicarTema() {
@@ -95,6 +95,6 @@ function aplicarTema() {
   if (tema === 'claro') {
     document.body.classList.add('modo-claro');
     const btn = document.getElementById('btn-tema');
-    if (btn) btn.textContent = 'Oscuro';
+    if (btn) btn.textContent = '🌙';
   }
 }
