@@ -1,5 +1,6 @@
 // Verificar sesion al cargar
 document.addEventListener('DOMContentLoaded', () => {
+  aplicarTema();
   verificarSesion();
   document.getElementById('bienvenida').textContent = 'Hola, ' + getUsername();
   cargarDispositivos();

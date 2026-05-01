@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  aplicarTema();
   verificarSesion('admin');
   document.getElementById('bienvenida').textContent = 'Hola, ' + getUsername();
   cargarUsuarios();

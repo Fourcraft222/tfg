@@ -84,3 +84,17 @@ function verificarSesion(rolRequerido) {
 
   return true;
 }
+function cambiarTema() {
+  const modoClaro = document.body.classList.toggle('modo-claro');
+  localStorage.setItem('tema', modoClaro ? 'claro' : 'oscuro');
+  document.getElementById('btn-tema').textContent = modoClaro ? 'Oscuro' : 'Claro';
+}
+
+function aplicarTema() {
+  const tema = localStorage.getItem('tema') || 'oscuro';
+  if (tema === 'claro') {
+    document.body.classList.add('modo-claro');
+    const btn = document.getElementById('btn-tema');
+    if (btn) btn.textContent = 'Oscuro';
+  }
+}

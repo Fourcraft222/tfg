@@ -22,8 +22,10 @@
     <button class="btn" onclick="hacerLogin()">Entrar</button>
 
     <div id="error" class="mensaje-error"></div>
+    <button class="btn-switch" id="btn-tema" onclick="cambiarTema()" style="width:auto;margin-top:12px">Modo claro</button>
   </div>
 
   <script src="js/auth.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', aplicarTema);</script>
 </body>
 </html>

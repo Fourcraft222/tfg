@@ -21,6 +21,23 @@
   --warning-bg: #3a2a1a;
 }
 
+body.modo-claro {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --border: #dddddd;
+  --accent: #2E75B6;
+  --accent-hover: #1a5a9a;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --success: #2e7d32;
+  --success-bg: #e8f5e9;
+  --danger: #c62828;
+  --danger-bg: #ffebee;
+  --warning: #e65100;
+  --warning-bg: #fff3e0;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: var(--bg-primary);
