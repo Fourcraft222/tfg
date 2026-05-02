@@ -20,5 +20,3 @@ postgres_data/
 certbot/
 nginx/
 
-riesgos.txt
-.env.save

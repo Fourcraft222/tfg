@@ -5,6 +5,25 @@ echo "   VPNaaS - Script de instalacion automatica"
 echo "================================================"
 echo ""
 
+# Comprobar que existe el .env.example rellenado
+if [ ! -f ".env.example" ]; then
+  echo "ERROR: No se encuentra el archivo .env.example"
+  echo "Clona el repositorio correctamente antes de ejecutar este script."
+  exit 1
+fi
+
+# Comprobar que las variables obligatorias estan rellenas
+source .env.example
+
+if [ -z "$DOMINIO" ] || [ -z "$ADMIN_USERNAME" ] || [ -z "$ADMIN_PASSWORD" ] || [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$JWT_SECRET" ]; then
+  echo "ERROR: Hay variables obligatorias sin rellenar en .env.example"
+  echo "Abre el archivo .env.example y rellena todos los campos vacios."
+  exit 1
+fi
+
+echo "Variables cargadas correctamente desde .env.example"
+echo ""
+
 # Instalar Docker si no esta instalado
 if ! command -v docker &> /dev/null; then
   echo "Docker no encontrado. Instalando Docker..."
@@ -24,21 +43,6 @@ if ! docker compose version &> /dev/null; then
 else
   echo "Docker Compose detectado correctamente."
 fi
-
-echo ""
-
-# Pedir datos al usuario
-read -p "Dominio DDNS (ej: tudominio.duckdns.org): " DOMINIO
-read -p "Puerto WireGuard (pulsa enter para puerto por defecto: 51822): " WG_PORT
-WG_PORT=${WG_PORT:-51822}
-read -p "Usuario admin: " ADMIN_USER
-read -s -p "Contrasena admin: " ADMIN_PASS
-echo ""
-read -p "Usuario base de datos: " DB_USER
-read -s -p "Contrasena base de datos: " DB_PASS
-echo ""
-read -p "Clave secreta JWT (minimo 32 caracteres): " JWT_SECRET
-echo ""
 
 echo ""
 echo "Generando configuracion..."
@@ -69,20 +73,10 @@ EOF
 
 sudo chmod 600 wireguard/config/wg0.conf
 
-# Crear .env
-cat > .env << EOF
-POSTGRES_USER=${DB_USER}
-POSTGRES_PASSWORD=${DB_PASS}
-POSTGRES_DB=vpndb
-DB_HOST=mi-db
-DB_PORT=5432
-ADMIN_USERNAME=${ADMIN_USER}
-ADMIN_PASSWORD=${ADMIN_PASS}
-JWT_SECRET=${JWT_SECRET}
-SERVER_PUBLIC_KEY=${PUBKEY}
-SERVER_ENDPOINT=${DOMINIO}:${WG_PORT}
-WG_PORT=${WG_PORT}
-EOF
+# Crear .env copiando desde .env.example y añadiendo las claves generadas
+cp .env.example .env
+echo "SERVER_PUBLIC_KEY=${PUBKEY}" >> .env
+echo "SERVER_ENDPOINT=${DOMINIO}:${WG_PORT}" >> .env
 
 # Crear nginx.conf temporal solo HTTP para obtener certificado
 cat > nginx/nginx.conf << EOF
@@ -157,7 +151,7 @@ echo "   Instalacion completada correctamente"
 echo "================================================"
 echo ""
 echo "Accede a tu panel en: https://${DOMINIO}"
-echo "Usuario admin: ${ADMIN_USER}"
+echo "Usuario admin: ${ADMIN_USERNAME}"
 echo ""
 echo "IMPORTANTE: Abre el puerto ${WG_PORT}/UDP y los"
 echo "puertos 80/TCP y 443/TCP en tu router."
