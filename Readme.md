@@ -1,4 +1,4 @@
-# VPNaaS sobre Raspberry Pi
+# VPNaaS
 
 Sistema de VPN doméstico construido desde cero con WireGuard, Docker y una plataforma web propia para gestionar usuarios y dispositivos.
 
@@ -6,9 +6,9 @@ Sistema de VPN doméstico construido desde cero con WireGuard, Docker y una plat
 
 ## Qué hace
 
-Convierte una Raspberry Pi en un servidor VPN privado desde el que puedes dar acceso a clientes externos de forma controlada. Cada usuario tiene su propia cuenta, puede conectar hasta 5 dispositivos y descargar su configuración directamente desde el panel web. Las credenciales se renuevan automáticamente cada año.
+Convierte una Raspberry Pi o cualquier linux en un servidor VPN privado desde el que puedes dar acceso a clientes externos de forma controlada. Cada usuario tiene su propia cuenta, puede conectar hasta 5 dispositivos y descargar su configuración directamente desde el panel web. Las credenciales se renuevan automáticamente cada año.
 
-El sistema está compuesto por cinco contenedores Docker que trabajan juntos: WireGuard (implementado desde cero, sin imágenes preconfiguradas), un backend Node.js con API REST, PostgreSQL, Nginx como reverse proxy y Certbot para el certificado SSL.
+El sistema está compuesto por cinco contenedores Docker que trabajan juntos: WireGuard (implementado desde cero), un backend Node.js con API REST, PostgreSQL, Nginx como reverse proxy y Certbot para el certificado SSL.
 
 ---
 
@@ -16,12 +16,12 @@ El sistema está compuesto por cinco contenedores Docker que trabajan juntos: Wi
 
 Antes de instalar necesitas tener listo lo siguiente:
 
-- Raspberry Pi con Raspberry Pi OS Bookworm (64-bit)
+- S.O: Raspberry Pi OS Bookworm, Linux o derivados
 - Un dominio DDNS apuntando a tu IP pública (puedes usar [DuckDNS](https://www.duckdns.org) gratis)
 - Port forwarding en tu router:
-  - Puerto **80/TCP** → IP de la Pi
-  - Puerto **443/TCP** → IP de la Pi
-  - Puerto **51822/UDP** (o el que elijas) → IP de la Pi
+  - Puerto **80/TCP** → IP de la Pi o dispositivo linux
+  - Puerto **443/TCP** → IP de la Pi o dispositivo linux
+  - Puerto **51822/UDP** (o el que elijas) → IP de la Pi o dispositivo linux
 
 ---
 
@@ -57,7 +57,7 @@ Al terminar, accede al panel en `https://tudominio.duckdns.org`.
 | Base de datos | PostgreSQL |
 | Reverse proxy | Nginx + Let's Encrypt |
 | Orquestación | Docker Compose |
-| Hardware | Raspberry Pi 4 |
+| Hardware | Raspberry Pi 5 |
 
 ---
 

@@ -13,7 +13,7 @@ node_modules/
 # Logs
 *.log
 
-# Datos de PostgreSQL si tienes volumen local
+# Datos de PostgreSQL
 postgres_data/
 
 #Carpeta certbot

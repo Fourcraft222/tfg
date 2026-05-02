@@ -18,8 +18,8 @@
     <label>Usuario</label>
     <input type="text" id="username" placeholder="Tu usuario">
 
-    <label>Contrasena</label>
-    <input type="password" id="password" placeholder="Tu contrasena">
+    <label>Contraseña</label>
+    <input type="password" id="password" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter') hacerLogin()">
 
     <button class="btn" onclick="hacerLogin()">Entrar</button>
 
