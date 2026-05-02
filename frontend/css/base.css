@@ -98,6 +98,21 @@ header .btn-switch:hover {
   color: white;
 }
 
+#btn-tema {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+#btn-tema:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .container {
   max-width: 1100px;
   margin: 36px auto;
