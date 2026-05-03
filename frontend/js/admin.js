@@ -286,7 +286,7 @@ async function cargarTrafico() {
   const segundos = (ahora - tiempoAnterior) / 1000;
 
   if (peers.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="color:#888;text-align:center">No hay peers activos</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="color:#888;text-align:center">No hay peers activos</td></tr>';
     return;
   }
 
@@ -313,6 +313,7 @@ async function cargarTrafico() {
         <td style="color:var(--success)">${formatBytes(rxVelocidad)}/s</td>
         <td style="color:var(--accent)">${formatBytes(txVelocidad)}/s</td>
         <td>${p.last_handshake > 0 ? new Date(p.last_handshake * 1000).toLocaleString('es-ES') : '-'}</td>
+        <td><button class="btn-small" onclick="verGraficaDispositivo('${p.public_key}')">Graf</button></td>
       </tr>
     `;
   }).join('');
@@ -326,4 +327,93 @@ function formatBytes(bytes) {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+let modalChart = null;
+
+async function verGraficaDispositivo(publicKey) {
+  const res = await fetch('/api/admin/trafico/semanal', {
+    headers: { 'Authorization': 'Bearer ' + getToken() }
+  });
+  if (!res.ok) return;
+
+  const dispositivos = await res.json();
+
+  const traficoRes = await fetch('/api/admin/trafico', {
+    headers: { 'Authorization': 'Bearer ' + getToken() }
+  });
+  const peers = await traficoRes.json();
+  const peer = peers.find(p => p.public_key === publicKey);
+  if (!peer) return;
+
+  const dispositivo = dispositivos.find(d => d.credencial_id === peer.credencial_id);
+
+  if (!dispositivo || dispositivo.datos.length === 0) {
+    alert('No hay datos semanales todavia para este dispositivo');
+    return;
+  }
+
+  const labels = dispositivo.datos.map(dato => {
+    const fecha = new Date(dato.fecha);
+    return fecha.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+  });
+
+  document.getElementById('modal-grafica-titulo').textContent = dispositivo.username;
+  document.getElementById('modal-grafica-subtitulo').textContent = dispositivo.nombre_dispositivo + ' - Consumo semanal';
+  document.getElementById('modal-grafica').style.display = 'flex';
+
+  // Destruir chart anterior si existe
+  if (modalChart) {
+    modalChart.destroy();
+    modalChart = null;
+  }
+
+  const ctx = document.getElementById('modal-chart').getContext('2d');
+  modalChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Recibido (MB)',
+          data: dispositivo.datos.map(d => (d.rx_bytes / 1024 / 1024).toFixed(2)),
+          backgroundColor: 'rgba(46, 117, 182, 0.7)',
+          borderColor: 'rgba(46, 117, 182, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Enviado (MB)',
+          data: dispositivo.datos.map(d => (d.tx_bytes / 1024 / 1024).toFixed(2)),
+          backgroundColor: 'rgba(76, 175, 80, 0.7)',
+          borderColor: 'rgba(76, 175, 80, 1)',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: getCSSVar('--text-primary') } } },
+      scales: {
+        x: { ticks: { color: getCSSVar('--text-secondary') }, grid: { color: getCSSVar('--border') } },
+        y: {
+          ticks: { color: getCSSVar('--text-secondary') },
+          grid: { color: getCSSVar('--border') },
+          title: { display: true, text: 'MB', color: getCSSVar('--text-secondary') }
+        }
+      }
+    }
+  });
+}
+
+function cerrarModalGrafica() {
+  document.getElementById('modal-grafica').style.display = 'none';
+  if (modalChart) {
+    modalChart.destroy();
+    modalChart = null;
+  }
+}
+
+function getCSSVar(variable) {
+  return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
 }

@@ -486,7 +486,7 @@ router.get('/trafico', async (req, res) => {
 
     // Enriquecer con datos de la DB
     const result = await pool.query(
-      `SELECT cr.public_key, cr.nombre_dispositivo, cr.ip_asignada,
+      `SELECT cr.public_key, cr.id as credencial_id, cr.nombre_dispositivo, cr.ip_asignada,
               u.username
        FROM credenciales cr
        JOIN clientes c ON c.id = cr.cliente_id
@@ -499,6 +499,7 @@ router.get('/trafico', async (req, res) => {
       const dispositivo = dispositivos.find(d => d.public_key === peer.public_key);
       return {
         ...peer,
+        credencial_id: dispositivo ? dispositivo.credencial_id : null,
         nombre_dispositivo: dispositivo ? dispositivo.nombre_dispositivo : 'Desconocido',
         username: dispositivo ? dispositivo.username : 'Desconocido',
         ip_asignada: dispositivo ? dispositivo.ip_asignada : peer.allowed_ips
@@ -506,6 +507,48 @@ router.get('/trafico', async (req, res) => {
     });
 
     res.json(peersEnriquecidos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// GET /api/admin/trafico/semanal - Trafico semanal por dispositivo
+router.get('/trafico/semanal', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+        td.credencial_id,
+        cr.nombre_dispositivo,
+        u.username,
+        td.fecha,
+        td.rx_bytes,
+        td.tx_bytes
+       FROM trafico_diario td
+       JOIN credenciales cr ON cr.id = td.credencial_id
+       JOIN clientes c ON c.id = cr.cliente_id
+       JOIN usuarios u ON u.id = c.usuario_id
+       WHERE td.fecha >= CURRENT_DATE - INTERVAL '6 days'
+       ORDER BY td.credencial_id, td.fecha ASC`
+    );
+
+    const dispositivos = {};
+    for (const row of result.rows) {
+      const key = row.credencial_id;
+      if (!dispositivos[key]) {
+        dispositivos[key] = {
+          credencial_id: row.credencial_id,
+          nombre_dispositivo: row.nombre_dispositivo,
+          username: row.username,
+          datos: []
+        };
+      }
+      dispositivos[key].datos.push({
+        fecha: row.fecha,
+        rx_bytes: parseInt(row.rx_bytes),
+        tx_bytes: parseInt(row.tx_bytes)
+      });
+    }
+
+    res.json(Object.values(dispositivos));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -6,6 +6,7 @@ const adminRoutes = require('./admin');
 const usuarioRoutes = require('./usuario');
 const { login } = require('./auth');
 const crearAdmin = require('./admin_gen');
+const guardarSnapshotDiario = require('./trafico');
 
 const app = express();
 app.use(express.json());
@@ -14,7 +15,9 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 createTables().then(() => {
   crearAdmin();
   renovarCredenciales();
+  guardarSnapshotDiario();
   setInterval(renovarCredenciales, 24 * 60 * 60 * 1000);
+  setInterval(guardarSnapshotDiario, 24 * 60 * 60 * 1000);
 });
 
 app.post('/api/auth/login', login);
