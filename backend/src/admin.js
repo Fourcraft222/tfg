@@ -339,6 +339,12 @@ router.delete('/dispositivos/:id', async (req, res) => {
       } catch (e) {}
     }
 
+    // Borrar trafico_diario del dispositivo
+    await pool.query(
+      'DELETE FROM trafico_diario WHERE credencial_id = $1',
+      [id]
+    );
+
     // Actualizar estado en la DB
     await pool.query(
       `UPDATE credenciales SET estado = 'revocada', ip_asignada = '0.0.0.0'

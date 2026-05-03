@@ -44,6 +44,11 @@ const guardarSnapshotDiario = async () => {
         [dispositivo.id, rxDia, txDia]
       );
     }
+    
+    // Eliminar registros mas antiguos de 30 dias
+    await pool.query(
+      `DELETE FROM trafico_diario WHERE fecha < CURRENT_DATE - INTERVAL '30 days'`
+    );
 
     console.log('Snapshot de trafico guardado correctamente');
   } catch (error) {
