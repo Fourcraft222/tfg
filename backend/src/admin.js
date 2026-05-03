@@ -33,6 +33,14 @@ router.post('/usuarios', async (req, res) => {
     const passwordPlana = generarPassword();
     const passwordHash = await bcrypt.hash(passwordPlana, 10);
 
+    // Verificar que no existe el username (case insensitive)
+    const existe = await pool.query(
+      'SELECT id FROM usuarios WHERE LOWER(username) = LOWER($1)',
+      [username]
+    );
+    if (existe.rows.length > 0) {
+      return res.status(400).json({ error: 'El nombre de usuario ya existe' });
+    }
     const result = await pool.query(
       `INSERT INTO usuarios (username, password, rol)
        VALUES ($1, $2, 'usuario') RETURNING id, username, rol, fecha_alta`,
@@ -284,6 +292,13 @@ router.delete('/usuarios/:id', async (req, res) => {
     }
 
     // Borrar en orden por las foreign keys
+    await pool.query(
+      `DELETE FROM trafico_diario WHERE credencial_id IN (
+        SELECT id FROM credenciales WHERE cliente_id IN (
+          SELECT id FROM clientes WHERE usuario_id = $1
+        )
+      )`, [id]
+    );
     await pool.query(
       `DELETE FROM credenciales WHERE cliente_id IN (
         SELECT id FROM clientes WHERE usuario_id = $1
