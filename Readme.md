@@ -66,7 +66,7 @@ Al terminar, accede al panel en `https://tudominio.duckdns.org`.
 ```
 tfg/
 ├── wireguard/          # Dockerfile e entrypoint de WireGuard
-├── backend/            # API REST y lógica del sistema
+├── backend/            # Dockerfile, API REST y lógica del sistema
 │   └── src/
 │       ├── admin.js    # Rutas de administración
 │       ├── usuario.js  # Rutas de usuario
