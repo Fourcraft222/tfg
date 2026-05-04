@@ -48,7 +48,7 @@ async function cargarDispositivos() {
         <label for="renew-${d.id}">Renovar automaticamente</label>
       </div>
       <div class="acciones">
-        <button class="btn-small" onclick="descargarConf(${d.id})">Descargar .conf</button>
+        <button class="btn-small" onclick="descargarConf(${d.id}, '${d.nombre_dispositivo}')">Descargar .conf</button>
         <button class="btn-small" onclick="verQR(${d.id})">Ver QR</button>
         <button class="btn-small btn-danger" onclick="eliminarDispositivo(${d.id})">Eliminar</button>
       </div>
@@ -135,7 +135,7 @@ async function eliminarDispositivo(id) {
   else alert('Error al revocar el dispositivo');
 }
 
-function descargarConf(id) {
+function descargarConf(id,nombre) {
   const token = getToken();
   fetch(`/api/usuario/dispositivos/${id}/conf`, {
     headers: { 'Authorization': 'Bearer ' + token }
@@ -145,7 +145,7 @@ function descargarConf(id) {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'wireguard.conf';
+    a.download = nombre + '.conf';
     a.click();
     window.URL.revokeObjectURL(url);
   });
