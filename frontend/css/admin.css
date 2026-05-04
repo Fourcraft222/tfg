@@ -88,3 +88,12 @@
   margin-top: 4px;
 }
 
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -119,3 +119,17 @@
   width: auto;
   flex: 1;
 }
+
+@media (max-width: 768px) {
+  .dispositivos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dispositivo-card .acciones {
+    flex-direction: column;
+  }
+
+  .dispositivo-card .acciones button {
+    width: 100%;
+  }
+}
