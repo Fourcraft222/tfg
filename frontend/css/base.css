@@ -38,6 +38,10 @@ body.modo-claro {
   --warning-bg: #fff3e0;
 }
 
+body.modo-claro #modal-grafica > div {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+
 body {
   font-family: Arial, sans-serif;
   background: var(--bg-primary);

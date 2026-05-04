@@ -393,13 +393,25 @@ async function verGraficaDispositivo(publicKey) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: getCSSVar('--text-primary') } } },
+      plugins: {
+        legend: {
+          labels: {
+            color: getCSSVar('--text-primary'),
+            font: { size: 13 }
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: getCSSVar('--text-secondary') }, grid: { color: getCSSVar('--border') } },
-        y: {
-          ticks: { color: getCSSVar('--text-secondary') },
+        x: {
+          ticks: { color: getCSSVar('--text-primary'), font: { size: 12 } },
           grid: { color: getCSSVar('--border') },
-          title: { display: true, text: 'MB', color: getCSSVar('--text-secondary') }
+          border: { color: getCSSVar('--border') }
+        },
+        y: {
+          ticks: { color: getCSSVar('--text-primary'), font: { size: 12 } },
+          grid: { color: getCSSVar('--border') },
+          border: { color: getCSSVar('--border') },
+          title: { display: true, text: 'MB', color: getCSSVar('--text-primary'), font: { size: 12 } }
         }
       }
     }
@@ -415,5 +427,5 @@ function cerrarModalGrafica() {
 }
 
 function getCSSVar(variable) {
-  return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+  return getComputedStyle(document.body).getPropertyValue(variable).trim();
 }
