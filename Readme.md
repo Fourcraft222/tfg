@@ -27,6 +27,8 @@ Antes de instalar necesitas tener listo lo siguiente:
 
 ## Instalación
 
+Antes de iniciar el script introduzca las variables que estan en el .env.example
+
 ```bash
 git clone https://github.com/fourcraft222/tfg.git
 cd tfg
