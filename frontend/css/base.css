@@ -112,6 +112,33 @@ header .btn-switch:hover {
   color: var(--text-secondary);
 }
 
+#btn-tema {
+  position: relative;
+}
+
+#btn-tema::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+#btn-tema:hover::after {
+  opacity: 1;
+}
+
 #btn-tema:hover {
   border-color: var(--accent);
   color: var(--accent);

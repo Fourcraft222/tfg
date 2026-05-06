@@ -84,17 +84,27 @@ function verificarSesion(rolRequerido) {
 
   return true;
 }
+
 function cambiarTema() {
   const modoClaro = document.body.classList.toggle('modo-claro');
   localStorage.setItem('tema', modoClaro ? 'claro' : 'oscuro');
-  document.getElementById('btn-tema').textContent = modoClaro ? '🌙' : '☀️';
+  const btn = document.getElementById('btn-tema');
+  if (btn) {
+    btn.textContent = modoClaro ? '🌙' : '☀️';
+    btn.setAttribute('data-tooltip', modoClaro ? 'Modo oscuro' : 'Modo claro');
+  }
 }
 
 function aplicarTema() {
   const tema = localStorage.getItem('tema') || 'oscuro';
+  const btn = document.getElementById('btn-tema');
   if (tema === 'claro') {
     document.body.classList.add('modo-claro');
-    const btn = document.getElementById('btn-tema');
-    if (btn) btn.textContent = '🌙';
+    if (btn) {
+      btn.textContent = '🌙';
+      btn.setAttribute('data-tooltip', 'Modo oscuro');
+    }
+  } else {
+    if (btn) btn.setAttribute('data-tooltip', 'Modo claro');
   }
 }
