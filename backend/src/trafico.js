@@ -32,8 +32,10 @@ const guardarSnapshotDiario = async () => {
       let txDia = txTotal;
 
       if (ayer.rows.length > 0) {
-        rxDia = Math.max(0, rxTotal - ayer.rows[0].rx_bytes);
-        txDia = Math.max(0, txTotal - ayer.rows[0].tx_bytes);
+        const rxDiff = rxTotal - ayer.rows[0].rx_bytes;
+        const txDiff = txTotal - ayer.rows[0].tx_bytes;
+	rxDia = rxDiff < 0 ? rxTotal : rxDiff;
+	txDia = txDiff < 0 ? txTotal : txDiff;
       }
 
       await pool.query(
