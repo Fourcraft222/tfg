@@ -21,7 +21,7 @@ Antes de instalar necesitas tener listo lo siguiente:
 - Port forwarding en tu router:
   - Puerto **80/TCP** → IP de la Pi o dispositivo linux
   - Puerto **443/TCP** → IP de la Pi o dispositivo linux
-  - Puerto **51822/UDP** (o el que elijas) → IP de la Pi o dispositivo linux
+  - Puerto **51820/UDP** (o el que elijas) → IP de la Pi o dispositivo linux
 
 ---
 
