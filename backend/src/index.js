@@ -15,10 +15,10 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // Programar snapshot de trafico diario a las 23:59 AM UTC
 const programarSnapshotDiario = () => {
   const ahora = new Date();
-  const proximas3AM = new Date();
-  proximas3AM.setHours(23, 59, 0, 0);
-  if (ahora >= proximas3AM) {
-    proximas3AM.setDate(proximas3AM.getDate() + 1);
+  const proximasPM = new Date();
+  proximasPM.setHours(23, 59, 0, 0);
+  if (ahora >= proximasPM) {
+    proximasPM.setDate(proximasPM.getDate() + 1);
   }
 
   const msHasta3AM = proximas3AM - ahora;
