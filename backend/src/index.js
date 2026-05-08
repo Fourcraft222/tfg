@@ -21,13 +21,13 @@ const programarSnapshotDiario = () => {
     proximasPM.setDate(proximasPM.getDate() + 1);
   }
 
-  const msHasta3AM = proximas3AM - ahora;
-  console.log(`Proximo snapshot en ${Math.round(msHasta3AM / 1000 / 60)} minutos`);
+  const msHastaPM = proximasPM - ahora;
+  console.log(`Proximo snapshot en ${Math.round(msHastaPM / 1000 / 60)} minutos`);
 
   setTimeout(() => {
     guardarSnapshotDiario();
     setInterval(guardarSnapshotDiario, 24 * 60 * 60 * 1000);
-  }, msHasta3AM);
+  }, msHastaPM);
 };
 
 createTables().then(() => {
