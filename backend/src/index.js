@@ -12,12 +12,29 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
+// Programar snapshot de trafico diario a las 3:00 AM UTC
+const programarSnapshotDiario = () => {
+  const ahora = new Date();
+  const proximas3AM = new Date();
+  proximas3AM.setHours(3, 0, 0, 0);
+  if (ahora >= proximas3AM) {
+    proximas3AM.setDate(proximas3AM.getDate() + 1);
+  }
+
+  const msHasta3AM = proximas3AM - ahora;
+  console.log(`Proximo snapshot en ${Math.round(msHasta3AM / 1000 / 60)} minutos`);
+
+  setTimeout(() => {
+    guardarSnapshotDiario();
+    setInterval(guardarSnapshotDiario, 24 * 60 * 60 * 1000);
+  }, msHasta3AM);
+};
+
 createTables().then(() => {
   crearAdmin();
   renovarCredenciales();
-  guardarSnapshotDiario();
   setInterval(renovarCredenciales, 24 * 60 * 60 * 1000);
-  setInterval(guardarSnapshotDiario, 24 * 60 * 60 * 1000);
+  programarSnapshotDiario();
 });
 
 app.post('/api/auth/login', login);
