@@ -188,7 +188,27 @@ async function cambiarPassword() {
   }
 
   if (nueva.length < 8) {
-    errorDiv.textContent = 'La contraseña debe tener al menos 8 caracteres';
+    errorDiv.textContent = 'La contrasena debe tener al menos 8 caracteres';
+    return;
+  }
+
+  if (!/[A-Z]/.test(nueva)) {
+    errorDiv.textContent = 'La contrasena debe tener al menos una mayuscula';
+    return;
+  }
+
+  if (!/[a-z]/.test(nueva)) {
+    errorDiv.textContent = 'La contrasena debe tener al menos una minuscula';
+    return;
+  }
+
+  if (!/[0-9]/.test(nueva)) {
+    errorDiv.textContent = 'La contrasena debe tener al menos un numero';
+    return;
+  }
+
+  if (!/[^A-Za-z0-9]/.test(nueva)) {
+    errorDiv.textContent = 'La contrasena debe tener al menos un simbolo';
     return;
   }
 
