@@ -268,8 +268,17 @@ router.put('/password', async (req, res) => {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
-  if (password_nueva.length < 6) {
-    return res.status(400).json({ error: 'La contrasena nueva debe tener al menos 6 caracteres' });
+  if (password_nueva.length < 8) {
+    return res.status(400).json({ error: 'La contraseña nueva debe tener al menos 8 caracteres' });
+  }
+
+  const tieneMayuscula = /[A-Z]/.test(password_nueva);
+  const tieneMinuscula = /[a-z]/.test(password_nueva);
+  const tieneNumero = /[0-9]/.test(password_nueva);
+  const tieneSimbolo = /[^A-Za-z0-9]/.test(password_nueva);
+
+  if (!tieneMayuscula || !tieneMinuscula || !tieneNumero || !tieneSimbolo) {
+    return res.status(400).json({ error: 'La contraseña debe tener mayuscula, minuscula, numero y simbolo' });
   }
 
   try {
@@ -282,7 +291,7 @@ router.put('/password', async (req, res) => {
     const passwordCorrecta = await bcrypt.compare(password_actual, usuario.password);
 
     if (!passwordCorrecta) {
-      return res.status(401).json({ error: 'La contrasena actual es incorrecta' });
+      return res.status(401).json({ error: 'La contraseña actual es incorrecta' });
     }
 
     const passwordHash = await bcrypt.hash(password_nueva, 10);
@@ -297,7 +306,7 @@ router.put('/password', async (req, res) => {
       [req.usuario.id, 'password_cambiada']
     );
 
-    res.json({ mensaje: 'Contrasena cambiada correctamente' });
+    res.json({ mensaje: 'Contraseña cambiada correctamente' });
 
   } catch (error) {
     res.status(500).json({ error: error.message });

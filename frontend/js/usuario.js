@@ -183,12 +183,12 @@ async function cambiarPassword() {
   }
 
   if (nueva !== confirmar) {
-    errorDiv.textContent = 'Las contrasenas nuevas no coinciden';
+    errorDiv.textContent = 'Las contraseñas nuevas no coinciden';
     return;
   }
 
-  if (nueva.length < 6) {
-    errorDiv.textContent = 'La contrasena debe tener al menos 6 caracteres';
+  if (nueva.length < 8) {
+    errorDiv.textContent = 'La contraseña debe tener al menos 8 caracteres';
     return;
   }
 
@@ -208,7 +208,7 @@ async function cambiarPassword() {
     return;
   }
 
-  okDiv.textContent = 'Contrasena cambiada correctamente';
+  okDiv.textContent = 'Contraseña cambiada correctamente';
   document.getElementById('password-actual').value = '';
   document.getElementById('password-nueva').value = '';
   document.getElementById('password-confirmar').value = '';
