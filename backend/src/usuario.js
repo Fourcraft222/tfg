@@ -27,13 +27,16 @@ const siguienteIP = async () => {
   const result = await pool.query(
     `SELECT ip_asignada FROM credenciales 
      WHERE ip_asignada != '0.0.0.0' AND estado = 'activa'
-     ORDER BY ip_asignada`
+     ORDER BY CAST(SPLIT_PART(ip_asignada, '.', 4) AS INTEGER)`
   );
   let esperada = 2;
   for (const row of result.rows) {
     const ultimo = parseInt(row.ip_asignada.split('.')[3]);
     if (ultimo !== esperada) return `10.0.0.${esperada}`;
     esperada++;
+  }
+  if (esperada > 254) {
+    throw new Error('No hay IPs disponibles en la subred');
   }
   return `10.0.0.${esperada}`;
 };
