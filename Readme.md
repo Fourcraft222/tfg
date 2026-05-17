@@ -6,7 +6,7 @@ Sistema de VPN doméstico construido desde cero con WireGuard, Docker y una plat
 
 ## Qué hace
 
-Convierte una Raspberry Pi o cualquier linux en un servidor VPN privado desde el que puedes dar acceso a clientes externos de forma controlada. Cada usuario tiene su propia cuenta, puede conectar hasta 5 dispositivos y descargar su configuración directamente desde el panel web. Las credenciales se renuevan automáticamente cada año.
+Convierte una Raspberry Pi o cualquier linux en un servidor VPN privado desde el que puedes dar acceso a clientes externos de forma controlada. Cada usuario tiene su propia cuenta, puede conectar hasta 5 dispositivos y descargar su configuración directamente desde el panel web. Las credenciales se renuevan automáticamente cada año. Destacar que todos los usuarios saldran con la misma IP al exterior (a Internet) que sera la IP pública del host de este sistema.
 
 El sistema está compuesto por cinco contenedores Docker que trabajan juntos: WireGuard (implementado desde cero), un backend Node.js con API REST, PostgreSQL, Nginx como reverse proxy y Certbot para el certificado SSL.
 
