@@ -569,6 +569,21 @@ router.get('/trafico/semanal', async (req, res) => {
       });
     }
 
+    // Calcular consumo diario como diferencia entre dias consecutivos
+    for (const disp of Object.values(dispositivos)) {
+      disp.datos = disp.datos.map((dato, i) => {
+        if (i === 0) return dato;
+        const anterior = disp.datos[i - 1];
+        const rxDiff = dato.rx_bytes - anterior.rx_bytes;
+        const txDiff = dato.tx_bytes - anterior.tx_bytes;
+        return {
+          ...dato,
+          rx_bytes: rxDiff < 0 ? dato.rx_bytes : rxDiff,
+          tx_bytes: txDiff < 0 ? dato.tx_bytes : txDiff
+        };
+      });
+    }
+
     res.json(Object.values(dispositivos));
   } catch (error) {
     res.status(500).json({ error: error.message });

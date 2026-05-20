@@ -21,29 +21,12 @@ const guardarSnapshotDiario = async () => {
       const rxTotal = parseInt(partes[5]) || 0;
       const txTotal = parseInt(partes[6]) || 0;
 
-      // Obtener snapshot de ayer para calcular solo el consumo de hoy
-      const ayer = await pool.query(
-        `SELECT rx_bytes, tx_bytes FROM trafico_diario
-         WHERE credencial_id = $1 AND fecha = CURRENT_DATE - INTERVAL '1 day'`,
-        [dispositivo.id]
-      );
-
-      let rxDia = rxTotal;
-      let txDia = txTotal;
-
-      if (ayer.rows.length > 0) {
-        const rxDiff = rxTotal - ayer.rows[0].rx_bytes;
-        const txDiff = txTotal - ayer.rows[0].tx_bytes;
-	rxDia = rxDiff < 0 ? rxTotal : rxDiff;
-	txDia = txDiff < 0 ? txTotal : txDiff;
-      }
-
       await pool.query(
         `INSERT INTO trafico_diario (credencial_id, fecha, rx_bytes, tx_bytes)
          VALUES ($1, CURRENT_DATE, $2, $3)
          ON CONFLICT (credencial_id, fecha)
          DO UPDATE SET rx_bytes = $2, tx_bytes = $3`,
-        [dispositivo.id, rxDia, txDia]
+        [dispositivo.id, rxTotal, txTotal]
       );
     }
     
