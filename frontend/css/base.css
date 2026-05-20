@@ -42,6 +42,15 @@ body.modo-claro #modal-grafica > div {
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
 
+body.modo-claro .badge.usuario{
+  background: #2E75B6;
+  color: #ffffff;
+}
+body.modo-claro .badge.admin {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: var(--bg-primary);
