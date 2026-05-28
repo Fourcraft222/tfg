@@ -49,7 +49,7 @@ async function cargarDispositivos() {
       </div>
       <div class="acciones">
         <button class="btn-small" onclick="descargarConf(${d.id}, '${d.nombre_dispositivo}')">Descargar .conf</button>
-        <button class="btn-small" onclick="verQR(${d.id})">Ver QR</button>
+        <button class="btn-small" onclick="verQR(${d.id}, '${d.nombre_dispositivo}')">Ver QR</button>
         <button class="btn-small btn-danger" onclick="eliminarDispositivo(${d.id})">Eliminar</button>
       </div>
     `;
@@ -151,22 +151,26 @@ function descargarConf(id,nombre) {
   });
 }
 
-async function verQR(id) {
+async function verQR(id, nombre) {
   const res = await fetch(`/api/usuario/dispositivos/${id}/qr`, {
     headers: { 'Authorization': 'Bearer ' + getToken() }
   });
   const data = await res.json();
+
   if (res.ok) {
-    const ventana = window.open('', '_blank', 'width=350,height=350');
-    ventana.document.write(`
-      <html><body style="margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#0f1117">
-        <img src="${data.qr}" style="width:300px;height:300px">
-      </body></html>
-    `);
+    document.getElementById('modal-qr-titulo').textContent = nombre;
+    document.getElementById('modal-qr-img').src = data.qr;
+    document.getElementById('modal-qr').style.display = 'flex';
   } else {
     alert('Error al generar el QR');
   }
 }
+
+function cerrarModalQR() {
+  document.getElementById('modal-qr').style.display = 'none';
+  document.getElementById('modal-qr-img').src = '';
+}
+
 async function cambiarPassword() {
   const actual = document.getElementById('password-actual').value.trim();
   const nueva = document.getElementById('password-nueva').value.trim();

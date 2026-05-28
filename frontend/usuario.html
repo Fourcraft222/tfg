@@ -59,5 +59,15 @@
 
   <script src="js/auth.js"></script>
   <script src="js/usuario.js"></script>
+  
+  <!-- Modal QR -->
+  <div id="modal-qr" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:200;justify-content:center;align-items:center">
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:28px;text-align:center">
+      <h3 id="modal-qr-titulo" style="color:var(--accent);margin-bottom:16px"></h3>
+      <img id="modal-qr-img" src="" style="width:280px;height:280px;display:block;margin:0 auto 16px auto">
+      <button class="btn btn-small btn-danger" onclick="cerrarModalQR()">Cerrar</button>
+    </div>
+  </div>
+
 </body>
 </html>
