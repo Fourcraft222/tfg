@@ -547,7 +547,7 @@ router.get('/trafico/semanal', async (req, res) => {
        JOIN credenciales cr ON cr.id = td.credencial_id
        JOIN clientes c ON c.id = cr.cliente_id
        JOIN usuarios u ON u.id = c.usuario_id
-       WHERE td.fecha >= CURRENT_DATE - INTERVAL '7 days'
+       WHERE td.fecha >= CURRENT_DATE - INTERVAL '8 days'
        ORDER BY td.credencial_id, td.fecha ASC`
     );
 
@@ -581,7 +581,7 @@ router.get('/trafico/semanal', async (req, res) => {
           rx_bytes: rxDiff < 0 ? dato.rx_bytes : rxDiff,
           tx_bytes: txDiff < 0 ? dato.tx_bytes : txDiff
         };
-      });
+      }).slice(1);
     }
 
     res.json(Object.values(dispositivos));
