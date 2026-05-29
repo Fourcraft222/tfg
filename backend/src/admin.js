@@ -547,7 +547,7 @@ router.get('/trafico/semanal', async (req, res) => {
        JOIN credenciales cr ON cr.id = td.credencial_id
        JOIN clientes c ON c.id = cr.cliente_id
        JOIN usuarios u ON u.id = c.usuario_id
-       WHERE td.fecha >= CURRENT_DATE - INTERVAL '8 days'
+       WHERE td.fecha >= CURRENT_DATE - INTERVAL '7 days'
        ORDER BY td.credencial_id, td.fecha ASC`
     );
 
