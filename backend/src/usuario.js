@@ -26,7 +26,7 @@ const generarClaves = async () => {
 const siguienteIP = async () => {
   const result = await pool.query(
     `SELECT ip_asignada FROM credenciales 
-     WHERE ip_asignada != '0.0.0.0' AND estado = 'activa'
+     WHERE ip_asignada != '0.0.0.0' AND estado IN ('activa', 'pausada')
      ORDER BY CAST(SPLIT_PART(ip_asignada, '.', 4) AS INTEGER)`
   );
   let esperada = 2;

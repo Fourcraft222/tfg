@@ -215,7 +215,7 @@ router.put('/usuarios/:id/activar', async (req, res) => {
     for (const cred of credenciales.rows) {
       const result = await pool.query(
         `SELECT ip_asignada FROM credenciales 
-         WHERE ip_asignada != '0.0.0.0' AND estado = 'activa'
+         WHERE ip_asignada != '0.0.0.0' AND estado IN ('activa', 'pausada')
          ORDER BY ip_asignada`
       );
       let esperada = 2;
