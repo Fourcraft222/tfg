@@ -162,13 +162,13 @@ router.put('/dispositivos/:id/toggle', async (req, res) => {
     const dispositivo = cred.rows[0];
 
     if (dispositivo.estado === 'activa') {
-      // Pausar: eliminar peer de WireGuard y liberar IP
+      // Pausar: eliminar peer de WireGuard pero mantener la IP
       await execPromise(
         `docker exec mi-wireguard wg set wg0 peer ${dispositivo.public_key} remove`
       );
       await pool.query(
-        'UPDATE credenciales SET estado = $1, ip_asignada = $2 WHERE id = $3',
-        ['pausada', '0.0.0.0', id]
+        'UPDATE credenciales SET estado = $1 WHERE id = $2',
+        ['pausada', id]
       );
       await execPromise(
         'docker exec mi-wireguard wg-quick save wg0'
@@ -176,31 +176,20 @@ router.put('/dispositivos/:id/toggle', async (req, res) => {
       res.json({ mensaje: 'Dispositivo pausado' });
 
     } else if (dispositivo.estado === 'pausada') {
-      // Reactivar: calcular nueva IP y añadir peer
-      const result = await pool.query(
-        `SELECT ip_asignada FROM credenciales 
-         WHERE ip_asignada != '0.0.0.0' AND estado = 'activa'
-         ORDER BY ip_asignada`
-      );
-      let esperada = 2;
-      for (const row of result.rows) {
-        const ultimo = parseInt(row.ip_asignada.split('.')[3]);
-        if (ultimo !== esperada) break;
-        esperada++;
-      }
-      const nuevaIP = `10.0.0.${esperada}`;
+      // Reactivar: usar la IP que ya tenia guardada
+      const ipExistente = dispositivo.ip_asignada;
 
       await execPromise(
-        `docker exec mi-wireguard wg set wg0 peer ${dispositivo.public_key} allowed-ips ${nuevaIP}/32`
+        `docker exec mi-wireguard wg set wg0 peer ${dispositivo.public_key} allowed-ips ${ipExistente}/32`
       );
       await pool.query(
-        'UPDATE credenciales SET estado = $1, ip_asignada = $2 WHERE id = $3',
-        ['activa', nuevaIP, id]
+        'UPDATE credenciales SET estado = $1 WHERE id = $2',
+        ['activa', id]
       );
       await execPromise(
         'docker exec mi-wireguard wg-quick save wg0'
       );
-      res.json({ mensaje: 'Dispositivo activado', ip: nuevaIP });
+      res.json({ mensaje: 'Dispositivo activado', ip: ipExistente });
 
     } else {
       return res.status(400).json({ error: 'El dispositivo esta revocado y no se puede reactivar' });
